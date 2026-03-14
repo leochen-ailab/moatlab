@@ -48,7 +48,7 @@ class BaseAgent:
         for _ in range(max_iterations):
             response = self.client.messages.create(
                 model=self.model,
-                system=self.system_prompt,
+                system=[{"type": "text", "text": self.system_prompt}],
                 tools=self.tools,
                 messages=messages,
                 max_tokens=8192,
