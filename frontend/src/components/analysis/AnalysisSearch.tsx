@@ -12,6 +12,18 @@ const modes: { value: AnalysisMode; label: string }[] = [
 const SEARCH_HISTORY_KEY = "moatlab-search-history";
 const MAX_HISTORY = 10;
 
+// 热门股票
+const POPULAR_STOCKS = [
+  { ticker: "AAPL", name: "Apple Inc.", name_cn: "苹果" },
+  { ticker: "MSFT", name: "Microsoft", name_cn: "微软" },
+  { ticker: "GOOGL", name: "Alphabet", name_cn: "谷歌" },
+  { ticker: "AMZN", name: "Amazon", name_cn: "亚马逊" },
+  { ticker: "TSLA", name: "Tesla", name_cn: "特斯拉" },
+  { ticker: "META", name: "Meta", name_cn: "Meta" },
+  { ticker: "NVDA", name: "NVIDIA", name_cn: "英伟达" },
+  { ticker: "BRK-B", name: "Berkshire Hathaway", name_cn: "伯克希尔" },
+];
+
 interface SearchResult {
   ticker: string;
   name: string;
@@ -269,6 +281,27 @@ export default function AnalysisSearch({
                     {item.name_cn}
                   </span>
                 )}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Popular Stocks */}
+      {!ticker && searchHistory.length === 0 && (
+        <div className="mt-4">
+          <h3 className="text-sm text-gray-500 mb-2">热门股票</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {POPULAR_STOCKS.map((stock) => (
+              <button
+                key={stock.ticker}
+                onClick={() => onTickerChange(stock.ticker)}
+                className="px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded text-sm text-left transition-colors"
+              >
+                <div className="font-medium text-blue-400">{stock.ticker}</div>
+                <div className="text-xs text-gray-500 mt-0.5">
+                  {stock.name_cn}
+                </div>
               </button>
             ))}
           </div>
