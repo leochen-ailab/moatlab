@@ -100,6 +100,17 @@ def api_history(ticker: str | None = None, limit: int = 50):
     return get_transaction_history(ticker, limit)
 
 
+@app.post("/api/portfolio/review")
+def api_portfolio_review():
+    """AI-driven portfolio review — check if investment thesis still holds."""
+    from moatlab.agents.portfolio import PortfolioAgent
+    agent = PortfolioAgent()
+    result = agent.manage(
+        "请回顾我当前的持仓组合，检查每个持仓的投资逻辑是否仍然成立，给出整体评估和建议。"
+    )
+    return {"result": result}
+
+
 # ── Analysis endpoints ──────────────────────────────────────────────
 
 @app.post("/api/analyze/{ticker}")

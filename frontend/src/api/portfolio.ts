@@ -29,3 +29,7 @@ export function getHistory(ticker?: string, limit = 50) {
   params.set("limit", String(limit));
   return api.get<TransactionHistory>(`/portfolio/history?${params}`);
 }
+
+export function reviewPortfolio() {
+  return api.post<{ result: string }>("/portfolio/review", {});
+}

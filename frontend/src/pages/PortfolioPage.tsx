@@ -5,14 +5,16 @@ import PortfolioSummary from "../components/portfolio/PortfolioSummary";
 import PositionTable from "../components/portfolio/PositionTable";
 import TradeDrawer from "../components/portfolio/TradeDrawer";
 import TransactionHistory from "../components/portfolio/TransactionHistory";
+import PortfolioReview from "../components/portfolio/PortfolioReview";
 import Spinner from "../components/common/Spinner";
 import { showToast } from "../components/common/Toast";
 
-type Tab = "positions" | "history";
+type Tab = "positions" | "history" | "review";
 
 const TABS: { key: Tab; label: string }[] = [
   { key: "positions", label: "当前持仓" },
   { key: "history", label: "交易历史" },
+  { key: "review", label: "持仓回顾" },
 ];
 
 export default function PortfolioPage() {
@@ -105,6 +107,8 @@ export default function PortfolioPage() {
       )}
 
       {activeTab === "history" && <TransactionHistory />}
+
+      {activeTab === "review" && <PortfolioReview />}
 
       <TradeDrawer
         open={drawerOpen}
