@@ -36,9 +36,9 @@ const initChart = () => {
     .filter(p => p.market_value && p.market_value > 0)
     .map(p => ({
       name: p.ticker,
-      value: p.market_value,
+      value: p.market_value || 0,
     }))
-    .sort((a, b) => b.value - a.value)
+    .sort((a, b) => (b.value || 0) - (a.value || 0))
 
   const option = {
     tooltip: {
