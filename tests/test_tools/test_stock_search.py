@@ -124,3 +124,24 @@ class TestSearchStocks:
         """测试未知查询"""
         results = search_stocks("xyz123unknown")
         assert results == []
+
+    def test_fuzzy_match_typo(self):
+        """测试模糊匹配 - 拼写错误"""
+        results = search_stocks("appl")  # 缺少一个 e
+        assert len(results) > 0
+        assert any(r["ticker"] == "AAPL" for r in results)
+
+    def test_fuzzy_match_chinese_typo(self):
+        """测试模糊匹配 - 中文近似"""
+        results = search_stocks("苹果公司")  # 完整公司名
+        assert len(results) > 0
+        assert any(r["ticker"] == "AAPL" for r in results)
+
+    def test_fuzzy_match_score_lower_than_exact(self):
+        """测试模糊匹配分数低于精确匹配"""
+        exact_results = search_stocks("apple")
+        fuzzy_results = search_stocks("appl")
+        if exact_results and fuzzy_results:
+            exact_score = next((r["match_score"] for r in exact_results if r["ticker"] == "AAPL"), 0)
+            fuzzy_score = next((r["match_score"] for r in fuzzy_results if r["ticker"] == "AAPL"), 0)
+            assert exact_score > fuzzy_score
