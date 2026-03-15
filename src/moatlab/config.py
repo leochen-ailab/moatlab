@@ -36,5 +36,19 @@ class Settings:
         default_factory=lambda: os.environ.get("SEC_EDGAR_IDENTITY", "MoatLab moatlab@example.com")
     )
 
+    # Lark Bot
+    lark_app_id: str = field(
+        default_factory=lambda: os.environ.get("LARK_APP_ID", "")
+    )
+    lark_app_secret: str = field(
+        default_factory=lambda: os.environ.get("LARK_APP_SECRET", "")
+    )
+    lark_verification_token: str = field(
+        default_factory=lambda: os.environ.get("LARK_VERIFICATION_TOKEN", "")
+    )
+    lark_encrypt_key: str = field(
+        default_factory=lambda: os.environ.get("LARK_ENCRYPT_KEY", "")
+    )
+
 
 settings = Settings()
