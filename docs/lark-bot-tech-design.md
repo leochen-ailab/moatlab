@@ -292,17 +292,16 @@ send_message(chat_id, formatted_text)  ← 推送结果
 
 ## 八、实施阶段
 
-### Stage 1: Bot 核心 + HTTP Callback（P0）
+### Stage 1: Bot 核心 + HTTP Callback（P0）✅
 
-- [ ] `pyproject.toml` 添加 `lark-oapi` 依赖
-- [ ] `config.py` 新增 Lark 环境变量
-- [ ] `channels/lark.py` — 客户端初始化、事件处理、消息收发
-- [ ] `channels/commands.py` — 指令解析（analyze + help）
-- [ ] `channels/formatter.py` — 分析结果格式化
-- [ ] `server.py` 新增 `/lark/webhook` 路由 + URL Verification
-- [ ] 私聊直接触发、群聊 @Bot 触发（@mention 解析 + 去前缀）
-- [ ] 异步分析 + 结果推送
-- [ ] 端到端验证：Lark 发 "分析 AAPL" → 收到分析报告
+- [x] `pyproject.toml` 添加 `lark-oapi` 依赖
+- [x] `config.py` 新增 Lark 环境变量
+- [x] `channels/lark.py` — 客户端初始化、事件处理、消息收发
+- [x] `channels/commands.py` — 指令解析（analyze + help），支持模糊匹配和公司名映射
+- [x] `channels/formatter.py` — 分析结果格式化
+- [x] `server.py` 新增 `/lark/webhook` 路由 + URL Verification
+- [x] 私聊直接触发、群聊 @Bot 触发（@mention 解析 + 去前缀）
+- [x] 异步分析 + 结果推送
 
 ### Stage 2: 消息卡片 + 扩展指令（P1）
 
