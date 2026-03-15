@@ -4,6 +4,47 @@
 
 本文档描述股票搜索功能的技术实现方案，对应产品规格：`stock-search-product-spec-2026-03-15.md`
 
+## Implementation Status
+
+### Phase 1: MVP ✅ (已完成 2026-03-16)
+
+**后端实现：**
+- ✅ 创建 `data/company_mappings.py` 数据模块（80+ 公司映射）
+- ✅ 创建 `tools/stock_search.py` 搜索工具
+  - 精确 ticker 匹配
+  - 公司名映射匹配（中英文）
+  - 部分匹配（子串搜索）
+  - LRU 缓存优化
+- ✅ 添加 `/api/search/stocks` API 端点到 `server.py`
+- ✅ 更新 `channels/commands.py` 使用共享映射模块
+
+**前端实现：**
+- ✅ 更新 `AnalysisSearch.tsx` 集成搜索 API
+  - 实时搜索建议（300ms debounce）
+  - 键盘导航（上下箭头、Enter、Escape）
+  - 点击外部关闭
+  - 加载状态指示
+- ✅ 修复 `analysisStore.ts` 输入框强制大写问题
+
+**测试覆盖：**
+- ✅ 23 个单元测试（`tests/test_tools/test_stock_search.py`）
+- ✅ 14 个 API 测试（`tests/test_api/test_search.py`）
+- ✅ 全部测试通过 100%
+
+**部署：**
+- ✅ 前后端已部署并验证功能正常
+
+### Phase 2: 增强搜索 (计划中)
+
+- ⏳ 模糊匹配算法
+- ⏳ 搜索历史（localStorage）
+- ⏳ 热门股票快捷入口
+
+### Phase 3: 数据源扩展 (计划中)
+
+- ⏳ 本地 SQLite 数据库
+- ⏳ 第三方 API 集成
+
 ## Architecture
 
 ### System Components
