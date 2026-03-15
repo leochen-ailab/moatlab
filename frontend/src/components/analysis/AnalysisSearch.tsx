@@ -154,11 +154,11 @@ export default function AnalysisSearch({
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
+      e.preventDefault();
       if (selectedIndex >= 0 && searchResults[selectedIndex]) {
         selectResult(searchResults[selectedIndex]);
-      } else {
-        onSubmit();
       }
+      // 移除了直接触发分析的逻辑，用户需要点击「开始分析」按钮
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
       setSelectedIndex((prev) => Math.min(prev + 1, searchResults.length - 1));
