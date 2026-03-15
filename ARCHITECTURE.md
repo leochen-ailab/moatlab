@@ -272,19 +272,19 @@ Orchestrator 接收 "analyze AAPL"
 
 ## 八、分期实施路线
 
-### Phase 1（MVP）— 单股分析 CLI ⬅️ 当前阶段
+### Phase 1（MVP）— 单股分析 CLI ✅
 - BaseAgent 基类 + Claude API tool_use 循环
 - FinancialAgent + ValuationAgent（先跑通财务分析 + 估值）
 - yfinance + edgartools 工具封装
 - CLI 入口：`moatlab analyze AAPL`
 
-### Phase 2 — 完整分析链
+### Phase 2 — 完整分析链 ✅
 - MoatAgent + ManagementAgent + DecisionAgent
 - Orchestrator 编排引擎
 - 提示词精调
 - `moatlab screen --roe-min 15 --debt-ratio-max 0.5`
 
-### Phase 3 — 持仓管理 + Web UI
+### Phase 3 — 持仓管理 + Web UI ⬅️ 当前阶段
 - PortfolioAgent + SQLite 持久化
 - FastAPI Web API
 - React 前端
