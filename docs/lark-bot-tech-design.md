@@ -86,22 +86,29 @@ client = lark.Client.builder() \
 **消息事件处理流程：**
 
 ```python
-def handle_message(data: P2ImMessageReceiveV1) -> None:
-    message = data.event.message
-    text = extract_text(message.content)  # 解析消息文本
-    chat_id = message.chat_id
-    message_id = message.message_id
+def handle_message(event: dict) -> None:
+    message = event["message"]
+    chat_type = message["chat_type"]  # "p2p" | "group"
+    text = extract_text(message["content"])
+    chat_id = message["chat_id"]
+    message_id = message["message_id"]
 
-    command = parse_command(text)  # 指令解析
+    # 群聊：需要 @Bot 才触发，去除 @mention 前缀
+    # 私聊：直接触发
+    if chat_type == "group":
+        mentions = message.get("mentions", [])
+        if not is_bot_mentioned(mentions):
+            return  # 群聊未 @Bot，忽略
+        text = strip_mentions(text)  # 去除 @Bot 文本
+
+    command = parse_command(text)
 
     if command.type == "help":
         reply_text(message_id, HELP_TEXT)
         return
 
     if command.type == "analyze":
-        # 先回复"分析中..."
         reply_text(message_id, f"正在分析 {command.ticker}，请稍候...")
-        # 后台异步执行分析
         threading.Thread(
             target=run_analysis,
             args=(command.ticker, chat_id),
@@ -293,15 +300,11 @@ send_message(chat_id, formatted_text)  ← 推送结果
 - [ ] `channels/commands.py` — 指令解析（analyze + help）
 - [ ] `channels/formatter.py` — 分析结果格式化
 - [ ] `server.py` 新增 `/lark/webhook` 路由 + URL Verification
+- [ ] 私聊直接触发、群聊 @Bot 触发（@mention 解析 + 去前缀）
 - [ ] 异步分析 + 结果推送
 - [ ] 端到端验证：Lark 发 "分析 AAPL" → 收到分析报告
 
-### Stage 2: 群聊支持（P0）
-
-- [ ] 群聊 @mention 解析（去除 @Bot 前缀提取指令）
-- [ ] 群聊用 reply（关联原消息），私聊用 send
-
-### Stage 3: 消息卡片 + 扩展指令（P1）
+### Stage 2: 消息卡片 + 扩展指令（P1）
 
 - [ ] Interactive Card 模板（买入/卖出/持有 配色）
 - [ ] 单项分析指令（护城河/管理层/财务/估值）
