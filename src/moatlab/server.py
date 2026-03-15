@@ -4,18 +4,17 @@ from __future__ import annotations
 
 import logging
 from datetime import date
-from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 
 from moatlab.store.database import init_db
 from moatlab.tools.portfolio import (
     add_position,
-    sell_position,
     get_portfolio,
-    get_transaction_history,
     get_portfolio_performance,
+    get_transaction_history,
+    sell_position,
 )
 
 logger = logging.getLogger(__name__)
@@ -109,6 +108,19 @@ def api_portfolio_review():
         "请回顾我当前的持仓组合，检查每个持仓的投资逻辑是否仍然成立，给出整体评估和建议。"
     )
     return {"result": result}
+
+
+@app.post("/lark/webhook")
+async def lark_webhook(request: Request):
+    """Lark 事件回调入口（HTTP Callback 模式）。"""
+    body = await request.json()
+
+    if body.get("type") == "url_verification":
+        return {"challenge": body.get("challenge", "")}
+
+    from moatlab.channels.lark import get_lark_service
+
+    return get_lark_service().handle_event(body)
 
 
 # ── Analysis endpoints ──────────────────────────────────────────────
