@@ -10,6 +10,8 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
+from moatlab.data.company_mappings import COMPANY_TO_TICKER
+
 # ── 同义词映射 ─────────────────────────────────────────────────────
 
 _ANALYZE_KEYWORDS = {
@@ -18,67 +20,6 @@ _ANALYZE_KEYWORDS = {
 }
 
 _HELP_KEYWORDS = {"帮助", "help", "/help", "使用说明", "怎么用"}
-
-# ── 公司名 → Ticker 映射（常见美股）────────────────────────────────
-
-_COMPANY_TO_TICKER: dict[str, str] = {
-    # 中文名
-    "苹果": "AAPL",
-    "微软": "MSFT",
-    "谷歌": "GOOGL",
-    "亚马逊": "AMZN",
-    "特斯拉": "TSLA",
-    "英伟达": "NVDA",
-    "脸书": "META",
-    "元宇宙": "META",
-    "奈飞": "NFLX",
-    "网飞": "NFLX",
-    "台积电": "TSM",
-    "腾讯": "TCEHY",
-    "阿里巴巴": "BABA",
-    "阿里": "BABA",
-    "拼多多": "PDD",
-    "京东": "JD",
-    "百度": "BIDU",
-    "比亚迪": "BYDDY",
-    "茅台": "MOUTAI",
-    "伯克希尔": "BRK-B",
-    "可口可乐": "KO",
-    "星巴克": "SBUX",
-    "耐克": "NKE",
-    "迪士尼": "DIS",
-    "英特尔": "INTC",
-    "高通": "QCOM",
-    "博通": "AVGO",
-    "超微": "AMD",
-    # 英文名 / 常见缩写
-    "apple": "AAPL",
-    "microsoft": "MSFT",
-    "google": "GOOGL",
-    "alphabet": "GOOGL",
-    "amazon": "AMZN",
-    "tesla": "TSLA",
-    "nvidia": "NVDA",
-    "meta": "META",
-    "facebook": "META",
-    "netflix": "NFLX",
-    "starbucks": "SBUX",
-    "disney": "DIS",
-    "nike": "NKE",
-    "coca-cola": "KO",
-    "cocacola": "KO",
-    "berkshire": "BRK-B",
-    "intel": "INTC",
-    "qualcomm": "QCOM",
-    "broadcom": "AVGO",
-    "amd": "AMD",
-    "tsmc": "TSM",
-    "alibaba": "BABA",
-    "tencent": "TCEHY",
-    "pinduoduo": "PDD",
-    "baidu": "BIDU",
-    "byd": "BYDDY",
-}
 
 
 @dataclass

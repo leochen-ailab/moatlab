@@ -17,6 +17,7 @@ from moatlab.tools.portfolio import (
     get_transaction_history,
     get_portfolio_performance,
 )
+from moatlab.tools.stock_search import search_stocks
 
 logger = logging.getLogger(__name__)
 
@@ -59,6 +60,33 @@ class ScreenRequest(BaseModel):
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "moatlab"}
+
+
+# ── Search endpoints ────────────────────────────────────────────────
+
+@app.get("/api/search/stocks")
+def api_search_stocks(q: str, limit: int = 10):
+    """Search stocks by ticker or company name.
+
+    Args:
+        q: Search query (ticker or company name)
+        limit: Maximum number of results (default 10)
+
+    Returns:
+        List of matching stocks with ticker, name, name_cn, sector, match_score
+    """
+    if not q or not q.strip():
+        raise HTTPException(status_code=400, detail="Query parameter 'q' is required")
+
+    if limit < 1 or limit > 50:
+        raise HTTPException(status_code=400, detail="Limit must be between 1 and 50")
+
+    results = search_stocks(q, limit)
+    return {
+        "results": results,
+        "query": q,
+        "total": len(results),
+    }
 
 
 # ── Portfolio endpoints ─────────────────────────────────────────────
