@@ -107,9 +107,45 @@ def _get_management(ticker: str) -> str:
 
 
 @app.command()
-def screen():
+def screen(
+    roe_min: float = typer.Option(None, "--roe-min", help="Minimum ROE (decimal), e.g. 0.15"),
+    debt_max: float = typer.Option(None, "--debt-max", help="Maximum debt/equity ratio"),
+    margin_min: float = typer.Option(None, "--margin-min", help="Minimum gross margin (decimal)"),
+    pe_max: float = typer.Option(None, "--pe-max", help="Maximum PE ratio"),
+    sector: str = typer.Option(None, "--sector", "-s", help="Filter by sector"),
+    criteria: str = typer.Option(None, "--criteria", "-c", help="Natural language criteria"),
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Show debug logs"),
+):
     """Screen stocks based on value investing criteria."""
-    console.print("[yellow]筛选功能即将实现。[/yellow]")
+    if verbose:
+        logging.basicConfig(level=logging.INFO, format="%(name)s | %(message)s")
+
+    console.print(Panel("[bold]MoatLab 价值投资筛选[/bold]", style="blue"))
+
+    # Build criteria string from options
+    parts = []
+    if roe_min is not None:
+        parts.append(f"ROE ≥ {roe_min*100:.0f}%")
+    if debt_max is not None:
+        parts.append(f"负债率 ≤ {debt_max}")
+    if margin_min is not None:
+        parts.append(f"毛利率 ≥ {margin_min*100:.0f}%")
+    if pe_max is not None:
+        parts.append(f"PE ≤ {pe_max}")
+    if sector:
+        parts.append(f"行业: {sector}")
+    if criteria:
+        parts.append(criteria)
+
+    criteria_str = "、".join(parts) if parts else None
+
+    from moatlab.agents.screener import ScreenerAgent
+
+    console.print("\n[bold cyan]━━━ 股票筛选 ━━━[/bold cyan]\n")
+    with console.status("[bold green]正在筛选股票..."):
+        agent = ScreenerAgent()
+        result = agent.screen(criteria_str)
+    console.print(Markdown(result))
 
 
 if __name__ == "__main__":
