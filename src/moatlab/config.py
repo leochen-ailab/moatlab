@@ -26,6 +26,11 @@ class Settings:
     dcf_terminal_growth_rate: float = 0.03  # 3% 永续增长率
     dcf_projection_years: int = 10
 
+    # Portfolio database
+    db_path: str = field(
+        default_factory=lambda: os.environ.get("MOATLAB_DB_PATH", "~/.moatlab/portfolio.db")
+    )
+
     # SEC EDGAR identity (required by SEC fair access policy)
     sec_edgar_identity: str = field(
         default_factory=lambda: os.environ.get("SEC_EDGAR_IDENTITY", "MoatLab moatlab@example.com")
