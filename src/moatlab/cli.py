@@ -325,5 +325,23 @@ def portfolio_history(
     console.print(table)
 
 
+@app.command()
+def serve(
+    host: str = typer.Option("0.0.0.0", "--host", "-h", help="Bind host"),
+    port: int = typer.Option(8000, "--port", "-p", help="Bind port"),
+    reload: bool = typer.Option(False, "--reload", help="Enable auto-reload for development"),
+):
+    """Start the MoatLab Web API server."""
+    import uvicorn
+
+    console.print(Panel(
+        f"[bold]MoatLab Web API[/bold]\n"
+        f"http://{host}:{port}\n"
+        f"Docs: http://{host}:{port}/docs",
+        style="blue",
+    ))
+    uvicorn.run("moatlab.server:app", host=host, port=port, reload=reload)
+
+
 if __name__ == "__main__":
     app()
