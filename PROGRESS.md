@@ -105,11 +105,11 @@
 
 | 子任务 | 状态 | 说明 |
 |--------|------|------|
-| **Stage 1: 基础框架** | ⏳ 待开始 | |
-| 初始化 Vite + Vue 3 + TypeScript 项目 | ⏳ | 创建 `frontend/` 目录 |
-| 安装依赖（Element Plus、ECharts、Axios、Pinia、Vue Router） | ⏳ | |
-| 配置路由和布局组件（Header、Sidebar、Layout） | ⏳ | |
-| 封装 API 客户端（Axios 实例 + 拦截器） | ⏳ | |
+| **Stage 1: 基础框架** | ✅ 完成 | |
+| 初始化 Vite + Vue 3 + TypeScript 项目 | ✅ | 创建 `frontend/` 目录 |
+| 安装依赖（Element Plus、ECharts、Axios、Pinia、Vue Router） | ✅ | |
+| 配置路由和布局组件（Header、Sidebar、Layout） | ✅ | |
+| 封装 API 客户端（Axios 实例 + 拦截器） | ✅ | |
 | **Stage 2: 持仓管理页面** | ⏳ 待开始 | |
 | 持仓概览卡片（调用 `/api/portfolio` 和 `/api/portfolio/performance`） | ⏳ | |
 | 持仓列表表格（实时价格刷新） | ⏳ | |
