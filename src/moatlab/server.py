@@ -164,7 +164,7 @@ def api_screen(req: ScreenRequest | None = None):
 
 # ── Lark Bot webhook ──────────────────────────────────────────────
 
-@app.post("/lark/webhook")
+@app.post("/feishu/events")
 async def lark_webhook(request: Request):
     """Lark 事件回调入口（HTTP Callback 模式）。"""
     body = await request.json()
