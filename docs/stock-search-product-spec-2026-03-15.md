@@ -84,69 +84,39 @@
 - 建议检查拼写或使用公司名搜索
 - 提供热门股票快捷入口
 
-## Technical Approach
+## Feature Scope
 
-### Phase 1: 基础搜索 API（MVP）
+### MVP (Phase 1)
+- 公司名搜索（中英文）
+- 实时搜索建议下拉
+- 基础错误提示
 
-**后端实现：**
-1. 创建 `/api/search/stocks?q={query}` 端点
-2. 复用 Lark Bot 的公司名映射逻辑
-3. 返回格式：
-```json
-{
-  "results": [
-    {
-      "ticker": "AAPL",
-      "name": "Apple Inc.",
-      "name_cn": "苹果公司",
-      "sector": "Technology",
-      "exchange": "NASDAQ"
-    }
-  ]
-}
-```
+### Phase 2
+- 模糊匹配和拼写容错
+- 搜索历史
+- 键盘导航支持
 
-**前端实现：**
-1. 修改 `AnalysisSearch.tsx` 添加搜索建议下拉
-2. 输入时调用搜索 API（debounce 300ms）
-3. 显示建议列表，点击填充 ticker
+### Phase 3
+- 热门股票快捷入口
+- 行业/板块筛选
+- 搜索分析统计
 
-### Phase 2: 增强搜索体验
+## Design Principles
 
-**功能增强：**
-1. 模糊匹配算法（Levenshtein 距离或 fuzzywuzzy）
-2. 搜索历史（localStorage）
-3. 热门股票快捷入口
-4. 键盘导航支持
-
-**数据源扩展：**
-1. 考虑使用 yfinance 的 `Ticker.info` 获取公司名
-2. 或集成第三方 ticker 搜索 API（如 Alpha Vantage、Polygon.io）
-3. 构建本地 ticker 数据库（S&P 500 + 常见中概股）
-
-### Phase 3: 高级功能（未来）
-
-1. 行业/板块筛选
-2. 多语言支持（繁体中文）
-3. 搜索排序优化（市值、热度）
-4. 搜索分析（用户搜索行为统计）
-
-## Design Considerations
-
-### UI/UX
+### 用户体验
 - 搜索框保持简洁，不增加认知负担
-- 建议列表最多显示 10 条
-- 移动端适配（触摸友好）
-- 加载状态明确（loading spinner）
+- 建议列表最多显示 10 条，避免信息过载
+- 移动端适配，触摸友好
+- 加载状态明确，提供即时反馈
 
-### Performance
-- 搜索 API 响应时间 < 500ms
-- 前端 debounce 避免频繁请求
-- 考虑缓存常见搜索结果
+### 性能要求
+- 搜索响应时间 < 500ms
+- 输入防抖，避免频繁请求
+- 常见搜索结果缓存
 
-### Data Quality
-- 公司名映射需要持续维护
+### 数据质量
 - 优先覆盖 S&P 500 + 热门中概股
+- 公司名映射持续维护
 - 支持用户反馈错误映射
 
 ## Out of Scope (V1)
@@ -167,28 +137,3 @@
 **定性指标：**
 - 用户反馈：搜索体验改善
 - 减少"找不到股票"的支持请求
-
-## Implementation Priority
-
-**P0 (Must Have):**
-- 公司名搜索 API
-- 前端自动补全 UI
-- 基础错误处理
-
-**P1 (Should Have):**
-- 模糊匹配
-- 搜索历史
-- 键盘导航
-
-**P2 (Nice to Have):**
-- 热门股票快捷入口
-- 搜索分析统计
-- 多语言支持
-
-## Next Steps
-
-1. Review & approve this spec
-2. 技术方案设计（选择搜索算法、数据源）
-3. API 设计评审
-4. 前端 UI/UX 设计
-5. 开发排期规划
