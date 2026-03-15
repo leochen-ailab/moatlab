@@ -325,9 +325,8 @@ def portfolio_history(
     console.print(table)
 
 
-@app.command(name="serve")
 @app.command(name="server")
-def serve(
+def server(
     host: str = typer.Option("0.0.0.0", "--host", "-h", help="Bind host"),
     port: int = typer.Option(8000, "--port", "-p", help="Bind port"),
     reload: bool = typer.Option(False, "--reload", help="Enable auto-reload for development"),
