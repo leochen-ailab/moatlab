@@ -9,12 +9,22 @@ const modes: { value: AnalysisMode; label: string }[] = [
   { value: "valuation", label: "估值" },
 ];
 
+const SEARCH_HISTORY_KEY = "moatlab-search-history";
+const MAX_HISTORY = 10;
+
 interface SearchResult {
   ticker: string;
   name: string;
   name_cn: string;
   sector: string;
   match_score: number;
+}
+
+interface SearchHistoryItem {
+  ticker: string;
+  name: string;
+  name_cn: string;
+  timestamp: number;
 }
 
 interface Props {
@@ -38,8 +48,53 @@ export default function AnalysisSearch({
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  // Load search history on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(SEARCH_HISTORY_KEY);
+      if (stored) {
+        setSearchHistory(JSON.parse(stored));
+      }
+    } catch (error) {
+      console.error("Failed to load search history:", error);
+    }
+  }, []);
+
+  // Save to search history
+  const addToHistory = (result: SearchResult) => {
+    const newItem: SearchHistoryItem = {
+      ticker: result.ticker,
+      name: result.name,
+      name_cn: result.name_cn,
+      timestamp: Date.now(),
+    };
+
+    const updated = [
+      newItem,
+      ...searchHistory.filter((item) => item.ticker !== result.ticker),
+    ].slice(0, MAX_HISTORY);
+
+    setSearchHistory(updated);
+    try {
+      localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(updated));
+    } catch (error) {
+      console.error("Failed to save search history:", error);
+    }
+  };
+
+  // Clear search history
+  const clearHistory = () => {
+    setSearchHistory([]);
+    try {
+      localStorage.removeItem(SEARCH_HISTORY_KEY);
+    } catch (error) {
+      console.error("Failed to clear search history:", error);
+    }
+  };
 
   // Debounced search
   useEffect(() => {
@@ -105,9 +160,14 @@ export default function AnalysisSearch({
   };
 
   const selectResult = (result: SearchResult) => {
+    addToHistory(result);
     onTickerChange(result.ticker);
     setShowSuggestions(false);
     setSelectedIndex(-1);
+  };
+
+  const selectFromHistory = (item: SearchHistoryItem) => {
+    onTickerChange(item.ticker);
   };
 
   return (
@@ -183,6 +243,37 @@ export default function AnalysisSearch({
           </button>
         ))}
       </div>
+
+      {/* Search History */}
+      {!ticker && searchHistory.length > 0 && (
+        <div className="mt-4">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm text-gray-500">最近搜索</h3>
+            <button
+              onClick={clearHistory}
+              className="text-xs text-gray-500 hover:text-gray-400"
+            >
+              清除
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {searchHistory.map((item) => (
+              <button
+                key={item.ticker}
+                onClick={() => selectFromHistory(item)}
+                className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded text-sm text-gray-300 transition-colors"
+              >
+                <span className="font-medium text-blue-400">{item.ticker}</span>
+                {item.name_cn && (
+                  <span className="ml-1.5 text-gray-500">
+                    {item.name_cn}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
