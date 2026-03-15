@@ -14,14 +14,7 @@
 
 ### 连接模式
 
-SDK 支持两种接收消息的方式：
-
-| 模式 | 适用场景 | 是否需要公网 URL |
-|------|---------|----------------|
-| **WebSocket 长连接** | 开发/本地测试 | 否，Bot 主动连 Lark 服务器 |
-| **HTTP Callback** | 生产部署 | 是，Lark 推送到你的 webhook |
-
-**策略：MVP 用 WebSocket 模式**，无需公网 URL 和内网穿透，开发体验最佳。生产部署时切换为 HTTP Callback。
+使用 **HTTP Callback**（将事件发送至开发者服务器）：Lark 平台将消息事件 POST 到 MoatLab 的 `/lark/webhook` 端点，集成到现有 FastAPI server。需要服务器有公网可达的 URL。
 
 ---
 
@@ -41,8 +34,7 @@ src/moatlab/bot/
 
 ```
 src/moatlab/config.py    # 新增 Lark 环境变量
-src/moatlab/server.py    # 新增 /lark/webhook 路由（HTTP Callback 模式）
-src/moatlab/cli.py       # 新增 `moatlab lark` 命令（WebSocket 模式）
+src/moatlab/server.py    # 新增 /lark/webhook 路由
 pyproject.toml           # 新增 lark-oapi 依赖
 ```
 
@@ -88,8 +80,8 @@ client = lark.Client.builder() \
 **核心职责：**
 - 初始化 Lark Client（海外域名）
 - 注册消息事件处理器（`im.message.receive_v1`）
+- 处理 HTTP Callback 事件
 - 发送/回复消息
-- WebSocket 模式启动
 
 **消息事件处理流程：**
 
@@ -215,61 +207,41 @@ def run_analysis(ticker: str, chat_id: str) -> None:
 
 ---
 
-## 五、两种运行模式
+## 五、HTTP Callback 接入
 
-### 5.1 WebSocket 模式（开发推荐）
-
-新增 CLI 命令 `moatlab lark`：
-
-```python
-# cli.py
-@app.command()
-def lark():
-    """启动 Lark Bot（WebSocket 长连接模式）。"""
-    from moatlab.bot.lark import start_ws
-    start_ws()
-```
-
-实现：
-
-```python
-def start_ws():
-    """WebSocket 长连接模式 — 无需公网 URL。"""
-    event_handler = EventDispatcherHandler.builder(
-        settings.lark_encrypt_key,
-        settings.lark_verification_token,
-    ).register_p2_im_message_receive_v1(handle_message).build()
-
-    ws_client = lark.ws.Client(
-        app_id=settings.lark_app_id,
-        app_secret=settings.lark_app_secret,
-        event_handler=event_handler,
-        domain=lark.LARK_DOMAIN,
-        log_level=lark.LogLevel.INFO,
-    )
-    ws_client.start()  # 阻塞运行
-```
-
-### 5.2 HTTP Callback 模式（生产部署）
-
-在 `server.py` 新增路由：
+在 `server.py` 新增 webhook 路由，处理 Lark 平台推送的事件：
 
 ```python
 from fastapi import Request
-from fastapi.responses import JSONResponse
 
 @app.post("/lark/webhook")
 async def lark_webhook(request: Request):
-    """Lark 事件回调入口。"""
+    """Lark 事件回调入口（HTTP Callback 模式）。"""
     body = await request.json()
 
-    # URL Verification
+    # URL Verification — Lark 配置 webhook 时的验证请求
     if body.get("type") == "url_verification":
         return {"challenge": body["challenge"]}
 
-    # 事件处理（委托给 event handler）
+    # 消息事件处理
     from moatlab.bot.lark import handle_event
-    return handle_event(body, dict(request.headers))
+    return handle_event(body)
+```
+
+`handle_event` 负责解析事件体、验证签名、分发到 `handle_message`：
+
+```python
+def handle_event(body: dict) -> dict:
+    """解析 Lark 事件并分发处理。"""
+    # 提取事件头和消息体
+    header = body.get("header", {})
+    event = body.get("event", {})
+    event_type = header.get("event_type")
+
+    if event_type == "im.message.receive_v1":
+        handle_message(event)
+
+    return {"code": 0}  # 告知 Lark 已收到
 ```
 
 ---
@@ -279,7 +251,7 @@ async def lark_webhook(request: Request):
 ```
 用户发消息 "@MoatLab 分析 AAPL"
   ↓
-Lark Platform → WebSocket/HTTP → handle_message()
+Lark Platform → POST /lark/webhook → handle_message()
   ↓
 parse_command("分析 AAPL") → Command(type="analyze", ticker="AAPL")
   ↓
@@ -306,28 +278,26 @@ send_message(chat_id, formatted_text)  ← 推送结果
 | 2 | 添加 Bot 能力 |
 | 3 | 权限申请：`im:message`、`im:message.receive` |
 | 4 | 事件订阅：`im.message.receive_v1` |
-| 5 | 连接方式：选择 WebSocket（开发）或 HTTP Callback（生产） |
+| 5 | 连接方式：选择「将事件发送至开发者服务器」，填入 `https://<公网地址>/lark/webhook` |
 | 6 | 发布应用版本 |
 
 ---
 
 ## 八、实施阶段
 
-### Stage 1: Bot 核心 + WebSocket 模式（P0）
+### Stage 1: Bot 核心 + HTTP Callback（P0）
 
 - [ ] `pyproject.toml` 添加 `lark-oapi` 依赖
 - [ ] `config.py` 新增 Lark 环境变量
 - [ ] `bot/lark.py` — 客户端初始化、事件处理、消息收发
 - [ ] `bot/commands.py` — 指令解析（analyze + help）
 - [ ] `bot/formatter.py` — 分析结果格式化
-- [ ] `cli.py` 新增 `moatlab lark` 命令（WebSocket 启动）
+- [ ] `server.py` 新增 `/lark/webhook` 路由 + URL Verification
 - [ ] 异步分析 + 结果推送
 - [ ] 端到端验证：Lark 发 "分析 AAPL" → 收到分析报告
 
-### Stage 2: HTTP Callback + 群聊支持（P0）
+### Stage 2: 群聊支持（P0）
 
-- [ ] `server.py` 新增 `/lark/webhook` 路由
-- [ ] URL Verification 处理
 - [ ] 群聊 @mention 解析（去除 @Bot 前缀提取指令）
 - [ ] 群聊用 reply（关联原消息），私聊用 send
 
