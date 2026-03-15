@@ -49,7 +49,7 @@ export const useAnalysisStore = create<AnalysisStore>((set, get) => ({
   error: null,
   history: loadHistory(),
 
-  setTicker: (ticker) => set({ ticker: ticker.toUpperCase() }),
+  setTicker: (ticker) => set({ ticker }),
   setMode: (mode) => set({ mode }),
 
   analyze: async () => {
@@ -57,15 +57,15 @@ export const useAnalysisStore = create<AnalysisStore>((set, get) => ({
     if (!ticker) return;
     set({ loading: true, error: null, result: null });
     try {
-      const result = await analysisApi.analyze(ticker, mode);
+      const result = await analysisApi.analyze(ticker.toUpperCase(), mode);
       const entry: AnalysisHistoryEntry = {
-        ticker,
+        ticker: ticker.toUpperCase(),
         mode,
         result,
         timestamp: Date.now(),
       };
       const history = [entry, ...get().history.filter(
-        (h) => !(h.ticker === ticker && h.mode === mode),
+        (h) => !(h.ticker === ticker.toUpperCase() && h.mode === mode),
       )].slice(0, MAX_HISTORY);
       saveHistory(history);
       set({ result, loading: false, history });
