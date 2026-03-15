@@ -289,9 +289,9 @@ ScreenerPage
 - [x] screenerStore + ScreenerForm + ScreenerResults
 - [x] 交易历史 Tab（PortfolioPage 增加 Tab 切换）
 
-### Stage 4: 持仓回顾 + 优化（P2）
+### Stage 4: 持仓回顾 + 优化（P2）✅
 
-- 后端新增 `/api/portfolio/review`
-- 持仓回顾 Tab
-- 深色/浅色主题
-- 分析历史本地缓存（localStorage）
+- [x] 后端新增 `/api/portfolio/review`
+- [x] 持仓回顾 Tab
+- [x] 深色/浅色主题切换（themeStore + CSS 变量 + localStorage）
+- [x] 分析历史本地缓存（localStorage，最多 10 条）
