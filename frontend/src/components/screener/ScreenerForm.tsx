@@ -1,18 +1,5 @@
 import { useScreenerStore } from "../../stores/screenerStore";
-
-const SECTORS = [
-  "Technology",
-  "Healthcare",
-  "Consumer Cyclical",
-  "Consumer Defensive",
-  "Financial Services",
-  "Industrials",
-  "Energy",
-  "Communication Services",
-  "Utilities",
-  "Real Estate",
-  "Basic Materials",
-];
+import { SECTOR_MAP, SECTORS_CN } from "../../constants/sectors";
 
 export default function ScreenerForm() {
   const { criteria, setCriteria, screen, loading } = useScreenerStore();
@@ -95,8 +82,8 @@ export default function ScreenerForm() {
             className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
           >
             <option value="">全部行业</option>
-            {SECTORS.map((s) => (
-              <option key={s} value={s}>{s}</option>
+            {SECTORS_CN.map((cn) => (
+              <option key={cn} value={SECTOR_MAP[cn]}>{cn}</option>
             ))}
           </select>
         </div>
