@@ -49,6 +49,47 @@ main (保护分支，始终可用)
 - 切新分支后立即 `git push -u origin <branch>` 建立 tracking
 - 不要在一个 commit 中混合多个不相关的改动
 
+## 功能迭代工作流
+
+每个功能按以下三步推进，确保需求清晰、方案可控、交付有序：
+
+```
+Product Spec  →  Tech Design  →  分阶段施工
+  (做什么)        (怎么做)        (逐步交付)
+```
+
+### 1. Product Spec（产品规格）
+
+- 明确功能的用户价值、核心场景和验收标准
+- 输出文件：`docs/<feature>-product-spec.md`
+- 重点回答：为什么做？给谁用？做到什么程度？
+
+### 2. Tech Design（技术设计）
+
+- 基于 Product Spec 制定技术方案
+- 输出文件：`docs/<feature>-tech-design.md`
+- 重点回答：架构选型、数据模型、API 设计、依赖关系
+- 将实现拆分为多个 Stage，每个 Stage 有明确的交付物
+
+### 3. 分阶段施工
+
+- 按 Tech Design 中的 Stage 顺序逐步实现
+- 每个 Stage 对应一个 feature 分支（如 `feat/<feature>-stage1`）
+- 每个 Stage 完成后提 PR 合入 main，再开始下一个 Stage
+- 施工过程中同步更新 Tech Design 文档中的进度状态
+
+### 示例
+
+以 Web UI 功能为例：
+
+| 步骤 | 产出 |
+|------|------|
+| Product Spec | `docs/web-ui-product-spec.md` |
+| Tech Design | `docs/web-ui-tech-design.md` |
+| Stage 1 施工 | 分支 `feat/web-ui-stage1` → PR → 合入 main |
+| Stage 2 施工 | 分支 `feat/web-ui-stage2` → PR → 合入 main |
+| ... | 直至所有 Stage 完成 |
+
 ## 版本标记
 
 每个 Phase 完成后在 `main` 上打 tag：
