@@ -6,7 +6,8 @@ interface Props {
 }
 
 export default function TopMovers({ performance }: Props) {
-  const { winners, losers } = performance;
+  const winners = performance.winners ?? [];
+  const losers = performance.losers ?? [];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -1,16 +1,17 @@
 import type { PortfolioData } from "../../types/portfolio";
 
 export default function PortfolioSummary({ data }: { data: PortfolioData }) {
+  const totalReturn = data.total_return ?? (data.total_market_value - data.total_cost);
   const returnColor =
-    data.total_return >= 0 ? "text-green-400" : "text-red-400";
+    totalReturn >= 0 ? "text-green-400" : "text-red-400";
 
   const cards = [
     { label: "总市值", value: `$${data.total_market_value.toLocaleString("en-US", { minimumFractionDigits: 2 })}` },
     { label: "总成本", value: `$${data.total_cost.toLocaleString("en-US", { minimumFractionDigits: 2 })}` },
     {
       label: "总回报",
-      value: `$${data.total_return.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
-      sub: `${data.total_return_pct >= 0 ? "+" : ""}${data.total_return_pct.toFixed(1)}%`,
+      value: `$${totalReturn.toLocaleString("en-US", { minimumFractionDigits: 2 })}`,
+      sub: `${(data.total_return_pct ?? 0) >= 0 ? "+" : ""}${(data.total_return_pct ?? 0).toFixed(1)}%`,
       color: returnColor,
     },
     { label: "持仓数", value: String(data.positions.length) },

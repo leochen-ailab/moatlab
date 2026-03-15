@@ -31,7 +31,9 @@ main (保护分支，始终可用)
 
 ## Commit 规范
 
-格式：`<type>: <description>`
+格式：`<type>: <中文描述>`
+
+**核心原则：一个 commit 只做一件事** — commit 是最小交付单位，保持原子性。
 
 | type | 用途 |
 |------|------|
@@ -41,6 +43,11 @@ main (保护分支，始终可用)
 | `refactor` | 重构 |
 | `test` | 测试 |
 | `chore` | 构建/配置 |
+
+**注意事项：**
+- 每次 commit 后立即 push 到远端
+- 切新分支后立即 `git push -u origin <branch>` 建立 tracking
+- 不要在一个 commit 中混合多个不相关的改动
 
 ## 版本标记
 
