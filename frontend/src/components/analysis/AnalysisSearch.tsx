@@ -9,12 +9,34 @@ const modes: { value: AnalysisMode; label: string }[] = [
   { value: "valuation", label: "估值" },
 ];
 
+const SEARCH_HISTORY_KEY = "moatlab-search-history";
+const MAX_HISTORY = 10;
+
+// 热门股票
+const POPULAR_STOCKS = [
+  { ticker: "AAPL", name: "Apple Inc.", name_cn: "苹果" },
+  { ticker: "MSFT", name: "Microsoft", name_cn: "微软" },
+  { ticker: "GOOGL", name: "Alphabet", name_cn: "谷歌" },
+  { ticker: "AMZN", name: "Amazon", name_cn: "亚马逊" },
+  { ticker: "TSLA", name: "Tesla", name_cn: "特斯拉" },
+  { ticker: "META", name: "Meta", name_cn: "Meta" },
+  { ticker: "NVDA", name: "NVIDIA", name_cn: "英伟达" },
+  { ticker: "BRK-B", name: "Berkshire Hathaway", name_cn: "伯克希尔" },
+];
+
 interface SearchResult {
   ticker: string;
   name: string;
   name_cn: string;
   sector: string;
   match_score: number;
+}
+
+interface SearchHistoryItem {
+  ticker: string;
+  name: string;
+  name_cn: string;
+  timestamp: number;
 }
 
 interface Props {
@@ -38,8 +60,53 @@ export default function AnalysisSearch({
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  // Load search history on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(SEARCH_HISTORY_KEY);
+      if (stored) {
+        setSearchHistory(JSON.parse(stored));
+      }
+    } catch (error) {
+      console.error("Failed to load search history:", error);
+    }
+  }, []);
+
+  // Save to search history
+  const addToHistory = (result: SearchResult) => {
+    const newItem: SearchHistoryItem = {
+      ticker: result.ticker,
+      name: result.name,
+      name_cn: result.name_cn,
+      timestamp: Date.now(),
+    };
+
+    const updated = [
+      newItem,
+      ...searchHistory.filter((item) => item.ticker !== result.ticker),
+    ].slice(0, MAX_HISTORY);
+
+    setSearchHistory(updated);
+    try {
+      localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(updated));
+    } catch (error) {
+      console.error("Failed to save search history:", error);
+    }
+  };
+
+  // Clear search history
+  const clearHistory = () => {
+    setSearchHistory([]);
+    try {
+      localStorage.removeItem(SEARCH_HISTORY_KEY);
+    } catch (error) {
+      console.error("Failed to clear search history:", error);
+    }
+  };
 
   // Debounced search
   useEffect(() => {
@@ -87,11 +154,11 @@ export default function AnalysisSearch({
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
+      e.preventDefault();
       if (selectedIndex >= 0 && searchResults[selectedIndex]) {
         selectResult(searchResults[selectedIndex]);
-      } else {
-        onSubmit();
       }
+      // 移除了直接触发分析的逻辑，用户需要点击「开始分析」按钮
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
       setSelectedIndex((prev) => Math.min(prev + 1, searchResults.length - 1));
@@ -105,9 +172,14 @@ export default function AnalysisSearch({
   };
 
   const selectResult = (result: SearchResult) => {
+    addToHistory(result);
     onTickerChange(result.ticker);
     setShowSuggestions(false);
     setSelectedIndex(-1);
+  };
+
+  const selectFromHistory = (item: SearchHistoryItem) => {
+    onTickerChange(item.ticker);
   };
 
   return (
@@ -183,6 +255,58 @@ export default function AnalysisSearch({
           </button>
         ))}
       </div>
+
+      {/* Search History */}
+      {!ticker && searchHistory.length > 0 && (
+        <div className="mt-4">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm text-gray-500">最近搜索</h3>
+            <button
+              onClick={clearHistory}
+              className="text-xs text-gray-500 hover:text-gray-400"
+            >
+              清除
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {searchHistory.map((item) => (
+              <button
+                key={item.ticker}
+                onClick={() => selectFromHistory(item)}
+                className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded text-sm text-gray-300 transition-colors"
+              >
+                <span className="font-medium text-blue-400">{item.ticker}</span>
+                {item.name_cn && (
+                  <span className="ml-1.5 text-gray-500">
+                    {item.name_cn}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Popular Stocks */}
+      {!ticker && searchHistory.length === 0 && (
+        <div className="mt-4">
+          <h3 className="text-sm text-gray-500 mb-2">热门股票</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {POPULAR_STOCKS.map((stock) => (
+              <button
+                key={stock.ticker}
+                onClick={() => onTickerChange(stock.ticker)}
+                className="px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded text-sm text-left transition-colors"
+              >
+                <div className="font-medium text-blue-400">{stock.ticker}</div>
+                <div className="text-xs text-gray-500 mt-0.5">
+                  {stock.name_cn}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
