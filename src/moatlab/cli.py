@@ -325,7 +325,8 @@ def portfolio_history(
     console.print(table)
 
 
-@app.command()
+@app.command(name="serve")
+@app.command(name="server")
 def serve(
     host: str = typer.Option("0.0.0.0", "--host", "-h", help="Bind host"),
     port: int = typer.Option(8000, "--port", "-p", help="Bind port"),
