@@ -105,28 +105,28 @@
 
 | 子任务 | 状态 | 说明 |
 |--------|------|------|
-| **Stage 1: 基础框架** | ✅ 完成 | |
+| **Stage 1: 基础框架** | ✅ 完成 | PR #14 |
 | 初始化 Vite + Vue 3 + TypeScript 项目 | ✅ | 创建 `frontend/` 目录 |
 | 安装依赖（Element Plus、ECharts、Axios、Pinia、Vue Router） | ✅ | |
 | 配置路由和布局组件（Header、Sidebar、Layout） | ✅ | |
 | 封装 API 客户端（Axios 实例 + 拦截器） | ✅ | |
-| **Stage 2: 持仓管理页面** | ⏳ 待开始 | |
-| 持仓概览卡片（调用 `/api/portfolio` 和 `/api/portfolio/performance`） | ⏳ | |
-| 持仓列表表格（实时价格刷新） | ⏳ | |
-| 买入/卖出表单（调用 `/api/portfolio/buy` 和 `/api/portfolio/sell`） | ⏳ | |
-| 交易历史表格（调用 `/api/portfolio/history`） | ⏳ | |
-| 持仓分布饼图（ECharts） | ⏳ | |
-| **Stage 3: 股票分析页面** | ⏳ 待开始 | |
-| 搜索栏和分析模式选择 | ⏳ | |
-| 分析进度跟踪（轮询或 WebSocket） | ⏳ | |
-| 分析结果展示（Tab 切换、Markdown 渲染） | ⏳ | |
-| 图表可视化（历史价格、财务指标、估值对比） | ⏳ | |
-| 历史分析记录 | ⏳ | |
-| **Stage 4: 股票筛选页面** | ⏳ 待开始 | |
-| 筛选条件表单 | ⏳ | |
-| 结果表格（调用 `/api/screen`） | ⏳ | |
-| 结果统计卡片 | ⏳ | |
-| 快速分析功能 | ⏳ | |
+| **Stage 2: 持仓管理页面** | ✅ 完成 | PR #15 |
+| 持仓概览卡片（调用 `/api/portfolio` 和 `/api/portfolio/performance`） | ✅ | SummaryCard.vue |
+| 持仓列表表格（实时价格刷新） | ✅ | PositionTable.vue |
+| 买入/卖出表单（调用 `/api/portfolio/buy` 和 `/api/portfolio/sell`） | ✅ | TradeForm.vue |
+| 交易历史表格（调用 `/api/portfolio/history`） | ✅ | HistoryTable.vue |
+| 持仓分布饼图（ECharts） | ✅ | PieChart.vue |
+| **Stage 3: 股票分析页面** | ✅ 完成 | PR #16 |
+| 搜索栏和分析模式选择 | ✅ | SearchBar.vue |
+| 分析进度跟踪（轮询或 WebSocket） | ✅ | ProgressTracker.vue |
+| 分析结果展示（Tab 切换、Markdown 渲染） | ✅ | ReportCard.vue |
+| 图表可视化（历史价格、财务指标、估值对比） | ⏳ | 待增强 |
+| 历史分析记录 | ✅ | HistoryList.vue |
+| **Stage 4: 股票筛选页面** | ✅ 完成 | PR #17 |
+| 筛选条件表单 | ✅ | FilterForm.vue |
+| 结果展示（调用 `/api/screen`） | ✅ | ResultCard.vue |
+| 结果统计卡片 | ⏳ | 待增强 |
+| 快速分析功能 | ⏳ | 待增强 |
 | **Stage 5: 优化与部署** | ⏳ 待开始 | |
 | 响应式设计（移动端适配） | ⏳ | |
 | 错误处理和 Loading 状态 | ⏳ | |
