@@ -205,8 +205,8 @@ Lark 支持 Markdown 子集。分析结果直接以文本消息发送：
 
 | 模块 | 说明 |
 |------|------|
-| `src/moatlab/bot/lark.py` | Lark Bot 核心：webhook 处理、指令解析、消息发送 |
-| `src/moatlab/bot/__init__.py` | Bot 模块初始化 |
+| `src/moatlab/channels/lark.py` | Lark 渠道核心：webhook 处理、指令解析、消息发送 |
+| `src/moatlab/channels/__init__.py` | 渠道模块初始化 |
 | Lark webhook 路由 | 在 `server.py` 中注册 `/lark/webhook` |
 | Config 扩展 | `config.py` 新增 Lark 相关环境变量 |
 

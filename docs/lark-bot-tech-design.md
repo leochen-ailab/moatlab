@@ -23,11 +23,11 @@
 新增模块（不影响现有代码）：
 
 ```
-src/moatlab/bot/
+src/moatlab/channels/
 ├── __init__.py
-├── lark.py              # Lark Bot 核心：客户端初始化、事件处理、消息发送
-├── commands.py          # 指令解析器：文本 → 结构化指令
-└── formatter.py         # 结果格式化：分析报告 → Lark 消息格式
+├── lark.py              # Lark 渠道核心：客户端初始化、事件处理、消息发送
+├── commands.py          # 指令解析器：文本 → 结构化指令（各渠道共用）
+└── formatter.py         # 结果格式化：分析报告 → 消息文本（各渠道共用）
 ```
 
 修改文件：
@@ -64,7 +64,7 @@ lark_encrypt_key: str = field(
 
 ## 四、核心模块设计
 
-### 4.1 Lark 客户端 (`bot/lark.py`)
+### 4.1 Lark 客户端 (`channels/lark.py`)
 
 ```python
 import lark_oapi as lark
@@ -139,7 +139,7 @@ def reply_text(message_id: str, text: str) -> None:
     client.im.v1.message.reply(request)
 ```
 
-### 4.2 指令解析 (`bot/commands.py`)
+### 4.2 指令解析 (`channels/commands.py`)
 
 ```python
 @dataclass
@@ -163,7 +163,7 @@ def parse_command(text: str) -> Command:
     return Command(type="unknown")
 ```
 
-### 4.3 结果格式化 (`bot/formatter.py`)
+### 4.3 结果格式化 (`channels/formatter.py`)
 
 ```python
 def format_analysis(ticker: str, reports: dict[str, str]) -> str:
@@ -224,7 +224,7 @@ async def lark_webhook(request: Request):
         return {"challenge": body["challenge"]}
 
     # 消息事件处理
-    from moatlab.bot.lark import handle_event
+    from moatlab.channels.lark import handle_event
     return handle_event(body)
 ```
 
@@ -289,9 +289,9 @@ send_message(chat_id, formatted_text)  ← 推送结果
 
 - [ ] `pyproject.toml` 添加 `lark-oapi` 依赖
 - [ ] `config.py` 新增 Lark 环境变量
-- [ ] `bot/lark.py` — 客户端初始化、事件处理、消息收发
-- [ ] `bot/commands.py` — 指令解析（analyze + help）
-- [ ] `bot/formatter.py` — 分析结果格式化
+- [ ] `channels/lark.py` — 客户端初始化、事件处理、消息收发
+- [ ] `channels/commands.py` — 指令解析（analyze + help）
+- [ ] `channels/formatter.py` — 分析结果格式化
 - [ ] `server.py` 新增 `/lark/webhook` 路由 + URL Verification
 - [ ] 异步分析 + 结果推送
 - [ ] 端到端验证：Lark 发 "分析 AAPL" → 收到分析报告
