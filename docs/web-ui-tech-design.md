@@ -268,26 +268,26 @@ ScreenerPage
 
 基于产品优先级，分 4 个阶段交付：
 
-### Stage 1: 项目骨架
+### Stage 1: 项目骨架 ✅ (f6ef441)
 
-- Vite + React + TS + TailwindCSS 初始化
-- AppLayout（导航栏 + 路由）
-- API client 封装
-- TS 类型定义
-- Spinner / Toast 通用组件
+- [x] Vite + React + TS + TailwindCSS 初始化
+- [x] AppLayout（导航栏 + 路由）
+- [x] API client 封装
+- [x] TS 类型定义
+- [x] Spinner / Toast 通用组件
 
-### Stage 2: 持仓管理 + 股票分析（P0）
+### Stage 2: 持仓管理 + 股票分析（P0）✅ (b1c2529)
 
-- portfolioStore + analysisStore
-- PositionTable + TradeDrawer + PortfolioSummary
-- AnalysisSearch + AnalysisReport（含 Markdown 渲染）
-- 联调验证：买入 → 表格刷新 → 分析 → 报告渲染
+- [x] portfolioStore + analysisStore
+- [x] PositionTable + TradeDrawer + PortfolioSummary
+- [x] AnalysisSearch + AnalysisReport（含 Markdown 渲染、折叠展开）
+- [x] 联调验证：买入 → 表格刷新 → 分析 → 报告渲染
 
-### Stage 3: 仪表盘 + 股票筛选（P1）
+### Stage 3: 仪表盘 + 股票筛选（P1）✅
 
-- DashboardPage：汇总卡片 + 饼图 + 赢家输家
-- ScreenerForm + ScreenerResults
-- 交易历史 Tab
+- [x] DashboardPage：汇总卡片 + 饼图 + 赢家输家 + 快捷入口
+- [x] screenerStore + ScreenerForm + ScreenerResults
+- [x] 交易历史 Tab（PortfolioPage 增加 Tab 切换）
 
 ### Stage 4: 持仓回顾 + 优化（P2）
 
