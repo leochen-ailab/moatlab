@@ -9,9 +9,14 @@ class Settings:
     anthropic_api_key: str = field(
         default_factory=lambda: os.environ.get("ANTHROPIC_API_KEY", "")
     )
+    anthropic_base_url: str | None = field(
+        default_factory=lambda: os.environ.get("ANTHROPIC_BASE_URL")
+    )
 
     # Model selection
-    default_model: str = "claude-sonnet-4-6"
+    default_model: str = field(
+        default_factory=lambda: os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6")
+    )
     deep_analysis_model: str = "claude-opus-4-6"
 
     # Analysis defaults

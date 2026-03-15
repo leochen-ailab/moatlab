@@ -33,7 +33,11 @@ class BaseAgent:
         self.tools = tools
         self.tool_dispatch = tool_dispatch
         self.model = model or settings.default_model
-        self.client = Anthropic(api_key=settings.anthropic_api_key)
+
+        client_kwargs = {"api_key": settings.anthropic_api_key}
+        if settings.anthropic_base_url:
+            client_kwargs["base_url"] = settings.anthropic_base_url
+        self.client = Anthropic(**client_kwargs)
 
     def run(self, user_input: str, max_iterations: int = 20) -> str:
         """Run the agent loop and return the final text response."""
@@ -44,7 +48,7 @@ class BaseAgent:
         for _ in range(max_iterations):
             response = self.client.messages.create(
                 model=self.model,
-                system=self.system_prompt,
+                system=[{"type": "text", "text": self.system_prompt}],
                 tools=self.tools,
                 messages=messages,
                 max_tokens=8192,
