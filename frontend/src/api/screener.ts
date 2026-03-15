@@ -1,7 +1,7 @@
 import client from './client'
-import type { ScreenRequest, StockScreenResult } from '../types/analysis'
+import type { ScreenCriteria, ScreenResponse } from '../types/screener'
 
-// 筛选股票
-export const screenStocks = (data: ScreenRequest) => {
-  return client.post<any, StockScreenResult[]>('/api/screen', data)
+export async function screenStocks(criteria: ScreenCriteria): Promise<ScreenResponse> {
+  const response = await client.post('/api/screen', criteria)
+  return response.data
 }
