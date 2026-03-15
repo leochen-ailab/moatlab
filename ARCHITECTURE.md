@@ -284,11 +284,11 @@ Orchestrator 接收 "analyze AAPL"
 - 提示词精调
 - `moatlab screen --roe-min 15 --debt-ratio-max 0.5`
 
-### Phase 3 — 持仓管理 + Web UI ⬅️ 当前阶段
+### Phase 3 — 持仓管理 + Web API ✅
 - PortfolioAgent + SQLite 持久化
-- FastAPI Web API
-- React 前端
-- `moatlab portfolio add AAPL --shares 100 --price 150`
+- FastAPI Web API + `moatlab serve`
+- CLI 持仓命令：`moatlab portfolio add/sell/list/review/history`
+- 21 个测试用例覆盖
 
 ---
 
