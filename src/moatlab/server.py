@@ -6,7 +6,7 @@ import logging
 from datetime import date
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 
 from moatlab.store.database import init_db
@@ -160,3 +160,19 @@ def api_screen(req: ScreenRequest | None = None):
     from moatlab.agents.screener import ScreenerAgent
     agent = ScreenerAgent()
     return {"result": agent.screen(criteria)}
+
+
+# ── Lark Bot webhook ──────────────────────────────────────────────
+
+@app.post("/lark/webhook")
+async def lark_webhook(request: Request):
+    """Lark 事件回调入口（HTTP Callback 模式）。"""
+    body = await request.json()
+
+    # URL Verification — Lark 配置 webhook 时的验证请求
+    if body.get("type") == "url_verification":
+        return {"challenge": body["challenge"]}
+
+    # 消息事件处理
+    from moatlab.channels.lark import handle_event
+    return handle_event(body)
