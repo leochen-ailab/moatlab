@@ -47,7 +47,7 @@ export default function DashboardPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {data && <AllocationChart positions={data.positions} />}
-            {performance && <TopMovers performance={performance} />}
+            {performance?.winners && <TopMovers performance={performance} />}
           </div>
 
           <QuickActions onOpenTrade={() => setDrawerOpen(true)} />
