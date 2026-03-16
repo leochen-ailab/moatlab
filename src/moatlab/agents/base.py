@@ -103,4 +103,11 @@ class BaseAgent:
         except Exception as e:
             error = f"工具 {tool_name} 执行失败: {e}"
             logger.error(f"[{self.name}] {error}")
-            return json.dumps({"error": error})
+            return json.dumps({
+                "error": error,
+                "instruction": (
+                    "工具调用失败。你必须在报告开头明确标注 '⚠️ 数据获取失败' 或 '⚠️ 计算失败'，"
+                    "并说明失败原因。不得编造、估算或输出任何具体数字。"
+                    "如果是关键工具（如 DCF、Owner Earnings）失败，必须中止估值分析。"
+                )
+            })
